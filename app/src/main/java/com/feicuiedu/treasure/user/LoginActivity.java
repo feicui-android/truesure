@@ -1,5 +1,7 @@
 package com.feicuiedu.treasure.user;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -72,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
             showPasswordError();
             return;
         }
-        activityUtils.startActivity(HomeActivity.class);
+        new LoginTask().execute();
     }
 
     private void showUsernameError() {
@@ -104,4 +106,41 @@ public class LoginActivity extends AppCompatActivity {
             btnLogin.setEnabled(canLogin);
         }
     };
+
+    private ProgressDialog progressDialog;
+
+    // 业务逻辑和UI视图是混在一起的
+    //
+    private final class LoginTask extends AsyncTask<String,String,String>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            activityUtils.hideSoftKeyboard(); // 隐藏keyboard
+            progressDialog = ProgressDialog.show(LoginActivity.this, "", "登陆中,请稍后...");
+        }
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                activityUtils.showToast(e.getMessage());
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            progressDialog.dismiss();
+            activityUtils.startActivity(HomeActivity.class);
+        }
+    }
 }
+
+
+
+
+
+
+
+
