@@ -1,9 +1,11 @@
-package com.feicuiedu.treasure.user;
+package com.feicuiedu.treasure.user.register;
+
+import com.feicuiedu.treasure.mvpbase.MvpBaseView;
 
 /**
  * Created by Administrator on 2016/6/12 0012.
  */
-public interface LoginView {
+public interface RegisterView extends MvpBaseView{
     /** 显示登陆中进度视图*/
     void showProgress();
     /** 隐藏登陆中进度视图*/

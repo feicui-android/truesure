@@ -5,8 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.feicuiedu.treasure.commons.ActivityUtils;
-import com.feicuiedu.treasure.user.LoginActivity;
-import com.feicuiedu.treasure.user.RegisterActivity;
+import com.feicuiedu.treasure.user.login.LoginActivity;
+import com.feicuiedu.treasure.user.register.RegisterActivity;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;

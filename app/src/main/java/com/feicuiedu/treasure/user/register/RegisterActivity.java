@@ -1,7 +1,6 @@
-package com.feicuiedu.treasure.user;
+package com.feicuiedu.treasure.user.register;
 
 import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +21,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity implements RegisterView{
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.et_Username) EditText etUsername;
     @Bind(R.id.et_Password) EditText etPassword;
@@ -98,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
             showPasswordError();
             return;
         }
-        new RegisterTask().execute();
+//        new RegisterTask().execute();
     }
 
     private void showUsernameError() {
@@ -114,32 +113,28 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private ProgressDialog progressDialog;
-    // 业务逻辑和UI视图是混在一起的
-    //
-    private final class RegisterTask extends AsyncTask<String,String,String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            activityUtils.hideSoftKeyboard(); // 隐藏keyboard
-            progressDialog = ProgressDialog.show(RegisterActivity.this, "", "注册中,请稍后...");
-        }
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                activityUtils.showToast(e.getMessage());
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+
+    @Override
+    public void showProgress() {
+        activityUtils.hideSoftKeyboard();
+        progressDialog = ProgressDialog.show(this, "", "注册中,请稍后...");
+    }
+
+    @Override
+    public void hideProgress() {
+        if(progressDialog != null) {
             progressDialog.dismiss();
-            activityUtils.startActivity(HomeActivity.class);
         }
     }
 
+    @Override
+    public void showMessage(String msg) {
+        activityUtils.showToast(msg);
+    }
+
+    @Override
+    public void navigateToHome() {
+        activityUtils.startActivity(HomeActivity.class);
+    }
 
 }

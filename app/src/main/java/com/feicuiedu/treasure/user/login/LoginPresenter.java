@@ -1,15 +1,17 @@
-package com.feicuiedu.treasure.user;
+package com.feicuiedu.treasure.user.login;
 
 import android.os.AsyncTask;
+
+import com.feicuiedu.treasure.mvpbase.MvpBasePresenter;
 
 /**
  * Created by Administrator on 2016/6/12 0012.
  */
-public class LoginPresenter {
-    private LoginView loginView;
+public class LoginPresenter extends MvpBasePresenter<LoginView>{
 
-    public LoginPresenter(LoginView loginView) {
-        this.loginView = loginView;
+
+    public LoginPresenter(LoginView mvpBaseView) {
+        super(mvpBaseView);
     }
 
     public void login() {
@@ -20,7 +22,7 @@ public class LoginPresenter {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            loginView.showProgress();
+            getMvpBaseView().showProgress();
         }
 
         @Override
@@ -29,8 +31,8 @@ public class LoginPresenter {
                 Thread.sleep(6000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                loginView.hideProgress();
-                loginView.showMessage(e.getMessage());
+                getMvpBaseView().hideProgress();
+                getMvpBaseView().showMessage(e.getMessage());
             }
             return null;
         }
@@ -38,8 +40,8 @@ public class LoginPresenter {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            loginView.hideProgress();
-            loginView.navigateToHome();
+            getMvpBaseView().hideProgress();
+            getMvpBaseView().navigateToHome();
         }
     }
 }

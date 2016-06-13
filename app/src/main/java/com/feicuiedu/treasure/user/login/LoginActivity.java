@@ -1,4 +1,4 @@
-package com.feicuiedu.treasure.user;
+package com.feicuiedu.treasure.user.login;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
