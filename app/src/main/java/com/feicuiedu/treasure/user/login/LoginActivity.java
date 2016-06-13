@@ -16,6 +16,7 @@ import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.ActivityUtils;
 import com.feicuiedu.treasure.commons.RegexUtils;
 import com.feicuiedu.treasure.components.AlertDialogFragment;
+import com.feicuiedu.treasure.user.User;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
 import butterknife.Bind;
@@ -76,7 +77,7 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
             showPasswordError();
             return;
         }
-        getPresenter().login();
+        getPresenter().login(new User(username,password));
     }
 
     private void showUsernameError() {

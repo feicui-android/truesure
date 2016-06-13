@@ -2,13 +2,18 @@ package com.feicuiedu.treasure.user.login;
 
 import android.os.AsyncTask;
 
-import com.feicuiedu.treasure.commons.LogUtils;
+import com.feicuiedu.treasure.net.NetClient;
+import com.feicuiedu.treasure.user.User;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
 import java.io.IOException;
 
-import okhttp3.OkHttpClient;
+import okhttp3.Call;
+import okhttp3.MediaType;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -17,15 +22,23 @@ import okhttp3.ResponseBody;
  */
 
 
-// MvpView
 
-public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView>{
+public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
 
-    public void login() {
-       new LoginTask().execute();
+    private final String URL = "http://admin.syfeicuiedu.com/Handler/UserHandler.ashx?action=login";
+    private final MediaType mediaType = MediaType.parse("text/*");
+    private Gson gson;
+
+    public LoginPresenter() {
+        gson = new GsonBuilder().setLenient().create();// 非严格模式
     }
 
-    private final class LoginTask extends AsyncTask<String, String, String> {
+    public void login(User user) {
+        new LoginTask().execute(user);
+    }
+
+    private final class LoginTask extends AsyncTask<User, String, LoginResult> {
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -33,35 +46,59 @@ public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView>{
         }
 
         @Override
-        protected String doInBackground(String... params) {
-            // compile 'com.squareup.okhttp3:okhttp:3.3.1'
-            OkHttpClient okHttpClient = new OkHttpClient();
+        protected LoginResult doInBackground(User... params) {
+            User user = params[0];
+            // 构建请求体
+            RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(user));
+            // 构建请求
+            Request request = new Request.Builder().url(URL)
+                    .post(requestBody)
+                    .build();
+            // 构建一次呼叫请求-得到当前这个呼叫(请求,响应)对象
+            Call call = NetClient.getInstance().getClient().newCall(request);
             try {
-                Request request = new Request.Builder()
-                        .url("http://www.baidu.com") // 没有设计请求体 (GET请求)
-                        .build();
-                // 执行一次 请求(Request), 得到一个响应(Response)
-                Response response = okHttpClient.newCall(request).execute();
-                // 响应码是否在  code >= 200 && code < 300 之间
-                if(response.isSuccessful()){
-                    ResponseBody responseBody = response.body(); // 响应体
-                    String str = responseBody.string();
-                    LogUtils.d(str);
+                // 执行这次呼叫,得到响应
+                Response response = call.execute();
+                // 对响应进行code判断
+                if (response.isSuccessful()) {
+                    // 从响应中,取出响应体
+                    ResponseBody responseBody = response.body();
+                    String body = responseBody.string();
+                    // 将字符串body --> LoginResult实体对象
+                    LoginResult loginResult = gson.fromJson(body, LoginResult.class);
+                    return loginResult;
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
-                getView().hideProgress();
-                getView().showMessage(e.getMessage());
+                publishProgress(e.getMessage());
             }
             return null;
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
             getView().hideProgress();
-            getView().navigateToHome();
+            getView().showMessage(values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(LoginResult result) {
+            super.onPostExecute(result);
+            getView().hideProgress();
+            if (result != null) {
+                switch (result.getCode()) {
+                    case SUCCESS:
+                        getView().navigateToHome();
+                        break;
+                    default:
+                        getView().showMessage("登录失败");
+                        break;
+                }
+            }
         }
     }
+
+    public static final int SUCCESS = 1;
+
 }
