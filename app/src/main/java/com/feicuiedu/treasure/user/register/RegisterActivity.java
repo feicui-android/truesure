@@ -16,6 +16,7 @@ import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.ActivityUtils;
 import com.feicuiedu.treasure.commons.RegexUtils;
 import com.feicuiedu.treasure.components.AlertDialogFragment;
+import com.feicuiedu.treasure.user.User;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
 import butterknife.Bind;
@@ -104,7 +105,7 @@ public class RegisterActivity extends MvpActivity<RegisterView,RegisterPresenter
             showPasswordError();
             return;
         }
-        getPresenter().register();
+        getPresenter().register(new User(username,password));
     }
 
     private void showUsernameError() {
@@ -142,5 +143,11 @@ public class RegisterActivity extends MvpActivity<RegisterView,RegisterPresenter
     @Override
     public void navigateToHome() {
         activityUtils.startActivity(HomeActivity.class);
+    }
+
+
+    @Override
+    public void clearEditView() {
+        etPassword.setText("");
     }
 }

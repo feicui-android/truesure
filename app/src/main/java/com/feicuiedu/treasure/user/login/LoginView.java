@@ -14,4 +14,6 @@ public interface LoginView extends MvpView{
     void showMessage(String msg);
     /** 导航到HOME页面*/
     void navigateToHome();
+    /** 清理*/
+    void clearEditView();
 }

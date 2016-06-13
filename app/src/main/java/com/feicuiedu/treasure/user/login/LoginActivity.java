@@ -141,6 +141,11 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
         activityUtils.startActivity(HomeActivity.class);
     }
 
+    @Override
+    public void clearEditView() {
+        etPassword.setText("");
+    }
+
 }
 
 

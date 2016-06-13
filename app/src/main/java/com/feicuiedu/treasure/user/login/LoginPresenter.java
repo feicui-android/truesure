@@ -20,9 +20,6 @@ import okhttp3.ResponseBody;
 /**
  * Created by Administrator on 2016/6/12 0012.
  */
-
-
-
 public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
 
     private final String URL = "http://admin.syfeicuiedu.com/Handler/UserHandler.ashx?action=login";
@@ -79,6 +76,7 @@ public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
             getView().hideProgress();
+            getView().clearEditView();
             getView().showMessage(values[0]);
         }
 
@@ -92,6 +90,7 @@ public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
                         getView().navigateToHome();
                         break;
                     default:
+                        getView().clearEditView();
                         getView().showMessage("登录失败");
                         break;
                 }
