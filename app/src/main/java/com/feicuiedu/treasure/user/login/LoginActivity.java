@@ -2,7 +2,7 @@ package com.feicuiedu.treasure.user.login;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -16,12 +16,20 @@ import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.ActivityUtils;
 import com.feicuiedu.treasure.commons.RegexUtils;
 import com.feicuiedu.treasure.components.AlertDialogFragment;
+import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class LoginActivity extends AppCompatActivity implements LoginView{
+public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> implements LoginView{
+
+    @NonNull
+    @Override
+    public LoginPresenter createPresenter() {
+        return new LoginPresenter();
+    }
+
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.et_Password) EditText etPassword;
@@ -73,8 +81,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView{
             showPasswordError();
             return;
         }
-//        new LoginTask().execute();
-        new LoginPresenter(this).login();
+        getPresenter().login();
     }
 
     private void showUsernameError() {
@@ -132,32 +139,6 @@ public class LoginActivity extends AppCompatActivity implements LoginView{
         activityUtils.startActivity(HomeActivity.class);
     }
 
-//    // 业务逻辑和UI视图是混在一起的
-//    //
-//    private final class LoginTask extends AsyncTask<String,String,String>{
-//        @Override
-//        protected void onPreExecute() {
-//            super.onPreExecute();
-//            activityUtils.hideSoftKeyboard(); // 隐藏keyboard
-//            progressDialog = ProgressDialog.show(LoginActivity.this, "", "登陆中,请稍后...");
-//        }
-//        @Override
-//        protected String doInBackground(String... params) {
-//            try {
-//                Thread.sleep(5000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//                activityUtils.showToast(e.getMessage());
-//            }
-//            return null;
-//        }
-//        @Override
-//        protected void onPostExecute(String s) {
-//            super.onPostExecute(s);
-//            progressDialog.dismiss();
-//            activityUtils.startActivity(HomeActivity.class);
-//        }
-//    }
 }
 
 

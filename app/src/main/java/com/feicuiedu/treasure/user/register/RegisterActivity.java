@@ -2,7 +2,7 @@ package com.feicuiedu.treasure.user.register;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -16,12 +16,13 @@ import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.ActivityUtils;
 import com.feicuiedu.treasure.commons.RegexUtils;
 import com.feicuiedu.treasure.components.AlertDialogFragment;
+import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class RegisterActivity extends AppCompatActivity implements RegisterView{
+public class RegisterActivity extends MvpActivity<RegisterView,RegisterPresenter> implements RegisterView{
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.et_Username) EditText etUsername;
     @Bind(R.id.et_Password) EditText etPassword;
@@ -53,6 +54,12 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
         etConfirm.addTextChangedListener(mTextWatcher); // EditText监听
         etPassword.addTextChangedListener(mTextWatcher); // EditText监听
         etUsername.addTextChangedListener(mTextWatcher); // EditText监听
+    }
+
+    @NonNull
+    @Override
+    public RegisterPresenter createPresenter() {
+        return new RegisterPresenter();
     }
 
     @Override
@@ -97,7 +104,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
             showPasswordError();
             return;
         }
-//        new RegisterTask().execute();
+        getPresenter().register();
     }
 
     private void showUsernameError() {
@@ -136,5 +143,4 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
     public void navigateToHome() {
         activityUtils.startActivity(HomeActivity.class);
     }
-
 }

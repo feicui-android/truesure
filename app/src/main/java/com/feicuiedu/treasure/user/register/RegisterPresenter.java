@@ -2,18 +2,12 @@ package com.feicuiedu.treasure.user.register;
 
 import android.os.AsyncTask;
 
-import com.feicuiedu.treasure.mvpbase.MvpBasePresenter;
-import com.feicuiedu.treasure.user.login.LoginView;
+import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
 /**
  * Created by Administrator on 2016/6/12 0012.
  */
-public class RegisterPresenter extends MvpBasePresenter<LoginView>{
-
-
-    public RegisterPresenter(LoginView mvpBaseView) {
-        super(mvpBaseView);
-    }
+public class RegisterPresenter extends MvpNullObjectBasePresenter<RegisterView> {
 
     public void register() {
         new RegisterTask().execute();
@@ -23,7 +17,7 @@ public class RegisterPresenter extends MvpBasePresenter<LoginView>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            getMvpBaseView().showProgress();
+            getView().showProgress();
         }
 
         @Override
@@ -32,8 +26,8 @@ public class RegisterPresenter extends MvpBasePresenter<LoginView>{
                 Thread.sleep(6000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                getMvpBaseView().hideProgress();
-                getMvpBaseView().showMessage(e.getMessage());
+                getView().hideProgress();
+                getView().showMessage(e.getMessage());
             }
             return null;
         }
@@ -41,8 +35,8 @@ public class RegisterPresenter extends MvpBasePresenter<LoginView>{
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            getMvpBaseView().hideProgress();
-            getMvpBaseView().navigateToHome();
+            getView().hideProgress();
+            getView().navigateToHome();
         }
     }
 }

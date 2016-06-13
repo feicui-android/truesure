@@ -2,17 +2,17 @@ package com.feicuiedu.treasure.user.login;
 
 import android.os.AsyncTask;
 
-import com.feicuiedu.treasure.mvpbase.MvpBasePresenter;
+import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
 /**
  * Created by Administrator on 2016/6/12 0012.
  */
-public class LoginPresenter extends MvpBasePresenter<LoginView>{
 
 
-    public LoginPresenter(LoginView mvpBaseView) {
-        super(mvpBaseView);
-    }
+// MvpView
+
+public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView>{
+
 
     public void login() {
         new LoginTask().execute();
@@ -22,7 +22,7 @@ public class LoginPresenter extends MvpBasePresenter<LoginView>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            getMvpBaseView().showProgress();
+            getView().showProgress();
         }
 
         @Override
@@ -31,8 +31,8 @@ public class LoginPresenter extends MvpBasePresenter<LoginView>{
                 Thread.sleep(6000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                getMvpBaseView().hideProgress();
-                getMvpBaseView().showMessage(e.getMessage());
+                getView().hideProgress();
+                getView().showMessage(e.getMessage());
             }
             return null;
         }
@@ -40,8 +40,8 @@ public class LoginPresenter extends MvpBasePresenter<LoginView>{
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            getMvpBaseView().hideProgress();
-            getMvpBaseView().navigateToHome();
+            getView().hideProgress();
+            getView().navigateToHome();
         }
     }
 }
