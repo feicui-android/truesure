@@ -24,11 +24,6 @@ import butterknife.OnClick;
 
 public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> implements LoginView{
 
-    @NonNull
-    @Override
-    public LoginPresenter createPresenter() {
-        return new LoginPresenter();
-    }
 
 
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -113,6 +108,12 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
             btnLogin.setEnabled(canLogin);
         }
     };
+
+    @NonNull
+    @Override
+    public LoginPresenter createPresenter() {
+        return new LoginPresenter();
+    }
 
     private ProgressDialog progressDialog;
 
