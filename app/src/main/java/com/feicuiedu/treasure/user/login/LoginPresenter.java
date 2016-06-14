@@ -1,7 +1,5 @@
 package com.feicuiedu.treasure.user.login;
 
-import android.os.AsyncTask;
-
 import com.feicuiedu.treasure.net.NetClient;
 import com.feicuiedu.treasure.user.User;
 import com.google.gson.Gson;
@@ -10,94 +8,62 @@ import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
 import java.io.IOException;
 
-import okhttp3.Call;
 import okhttp3.MediaType;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Administrator on 2016/6/12 0012.
  */
 public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
 
-    private final String URL = "http://admin.syfeicuiedu.com/Handler/UserHandler.ashx?action=login";
     private final MediaType mediaType = MediaType.parse("text/*");
     private Gson gson;
+
+    private Call<ResponseBody> loginCall;
+
+    public static final int SUCCESS = 1;
 
     public LoginPresenter() {
         gson = new GsonBuilder().setLenient().create();// 非严格模式
     }
 
     public void login(User user) {
-        new LoginTask().execute(user);
+        getView().showProgress();
+        RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(user));
+        // 构建登陆请求，得到登陆Call模型
+        loginCall = NetClient.getInstance().getUserApi().login(requestBody);
+        loginCall.enqueue(callback);
     }
 
-    private final class LoginTask extends AsyncTask<User, String, LoginResult> {
-
+    // Retrofit CallBack在Android内是UI线程回调
+    private final Callback<ResponseBody> callback = new Callback<ResponseBody>() {
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            getView().showProgress();
-        }
-
-        @Override
-        protected LoginResult doInBackground(User... params) {
-            User user = params[0];
-            // 构建请求体
-            RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(user));
-            // 构建请求
-            Request request = new Request.Builder().url(URL)
-                    .post(requestBody)
-                    .build();
-            // 构建一次呼叫请求-得到当前这个呼叫(请求,响应)对象
-            Call call = NetClient.getInstance().getClient().newCall(request);
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            getView().hideProgress();
             try {
-                // 执行这次呼叫,得到响应
-                Response response = call.execute();
-                // 对响应进行code判断
                 if (response.isSuccessful()) {
-                    // 从响应中,取出响应体
-                    ResponseBody responseBody = response.body();
-                    String body = responseBody.string();
-                    // 将字符串body --> LoginResult实体对象
-                    LoginResult loginResult = gson.fromJson(body, LoginResult.class);
-                    return loginResult;
+                    // 拿到响应体数据
+                    String body = response.body().string();
+                    LoginResult result = gson.fromJson(body, LoginResult.class);
+                    if (result.getCode() == SUCCESS) {
+                        getView().navigateToHome();
+                        return;
+                    }
+                    getView().showMessage(result.getMsg());
                 }
             } catch (IOException e) {
-                e.printStackTrace();
-                publishProgress(e.getMessage());
+                onFailure(call, e);
             }
-            return null;
         }
 
         @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
+        public void onFailure(Call<ResponseBody> call, Throwable t) {
             getView().hideProgress();
-            getView().clearEditView();
-            getView().showMessage(values[0]);
+            getView().showMessage(t.getMessage());
         }
-
-        @Override
-        protected void onPostExecute(LoginResult result) {
-            super.onPostExecute(result);
-            getView().hideProgress();
-            if (result != null) {
-                switch (result.getCode()) {
-                    case SUCCESS:
-                        getView().navigateToHome();
-                        break;
-                    default:
-                        getView().clearEditView();
-                        getView().showMessage("登录失败");
-                        break;
-                }
-            }
-        }
-    }
-
-    public static final int SUCCESS = 1;
-
+    };
 }

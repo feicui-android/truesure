@@ -28,8 +28,6 @@ import butterknife.OnClick;
 
 public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> implements LoginView{
 
-
-
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.et_Password) EditText etPassword;
     @Bind(R.id.et_Username) EditText etUsername;

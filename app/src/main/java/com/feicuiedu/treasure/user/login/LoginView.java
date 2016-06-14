@@ -5,7 +5,7 @@ import com.hannesdorfmann.mosby.mvp.MvpView;
 /**
  * Created by Administrator on 2016/6/12 0012.
  */
-public interface LoginView extends MvpView{
+public interface LoginView extends MvpView {
     /** 显示登陆中进度视图*/
     void showProgress();
     /** 隐藏登陆中进度视图*/
