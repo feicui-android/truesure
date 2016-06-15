@@ -30,9 +30,18 @@ public class RegisterPresenter extends MvpNullObjectBasePresenter<RegisterView> 
 
     public void register(User user) {
         getView().showProgress();
+        if (call != null) call.cancel();
         RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(user));
         call = NetClient.getInstance().getUserApi().register(requestBody);
         call.enqueue(callback); // 异步执行
+    }
+
+    @Override
+    public void detachView(boolean retainInstance) {
+        super.detachView(retainInstance);
+        if (call != null) {
+            call.cancel();
+        }
     }
 
     private Callback<ResponseBody> callback = new Callback<ResponseBody>() {

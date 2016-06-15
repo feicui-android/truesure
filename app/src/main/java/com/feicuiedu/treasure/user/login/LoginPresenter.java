@@ -34,9 +34,18 @@ public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
     public void login(User user) {
         getView().showProgress();
         RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(user));
+        if (loginCall != null) loginCall.cancel();
         // 构建登陆请求，得到登陆Call模型
         loginCall = NetClient.getInstance().getUserApi().login(requestBody);
         loginCall.enqueue(callback);
+    }
+
+    @Override
+    public void detachView(boolean retainInstance) {
+        super.detachView(retainInstance);
+        if (loginCall != null) {
+            loginCall.cancel();
+        }
     }
 
     // Retrofit CallBack在Android内是UI线程回调
