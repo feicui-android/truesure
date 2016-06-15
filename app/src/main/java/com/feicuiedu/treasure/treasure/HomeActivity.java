@@ -12,6 +12,7 @@ import android.widget.ImageView;
 
 import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.ActivityUtils;
+import com.feicuiedu.treasure.user.account.AccountActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -51,14 +52,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
         );
-        drawerLayout.setDrawerListener(toggle);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         // ----------------------------------------------------------------------  2
         ivUserIcon = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_userIcon);// 注意：不能用ButterKnife拿到
         ivUserIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activityUtils.showToast("进入个人中心");
+                activityUtils.startActivity(AccountActivity.class);
             }
         });
     }

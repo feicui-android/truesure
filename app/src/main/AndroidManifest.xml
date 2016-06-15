@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.feicuiedu.treasure">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -19,7 +19,8 @@
         </activity>
         <activity android:name=".user.login.LoginActivity" />
         <activity android:name=".user.register.RegisterActivity" />
-        <activity android:name=".treasure.HomeActivity"></activity>
+        <activity android:name=".treasure.HomeActivity" />
+        <activity android:name=".user.account.AccountActivity"></activity>
     </application>
 
 </manifest>
