@@ -31,6 +31,8 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
 
     compile 'com.pkmmte.view:circularimageview:1.1'
+
+    compile 'org.hybridsquad.android.photocropper:library:2.1.0'
 }
 
 
