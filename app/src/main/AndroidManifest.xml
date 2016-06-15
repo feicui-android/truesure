@@ -19,7 +19,7 @@
         </activity>
         <activity android:name=".user.login.LoginActivity" />
         <activity android:name=".user.register.RegisterActivity" />
-        <activity android:name=".HomeActivity"></activity>
+        <activity android:name=".treasure.HomeActivity"></activity>
     </application>
 
 </manifest>

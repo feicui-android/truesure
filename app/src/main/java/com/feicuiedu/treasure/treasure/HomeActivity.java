@@ -1,7 +1,9 @@
-package com.feicuiedu.treasure;
+package com.feicuiedu.treasure.treasure;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.feicuiedu.treasure.R;
 
 public class HomeActivity extends AppCompatActivity {
 
