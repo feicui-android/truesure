@@ -2,6 +2,7 @@ package com.feicuiedu.treasure.user.login;
 
 import com.feicuiedu.treasure.net.NetClient;
 import com.feicuiedu.treasure.user.User;
+import com.feicuiedu.treasure.user.UserPrefs;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
@@ -59,6 +60,8 @@ public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
                     String body = response.body().string();
                     LoginResult result = gson.fromJson(body, LoginResult.class);
                     if (result.getCode() == SUCCESS) {
+                        UserPrefs.getInstance().setPhoto(NetClient.BASE_URL + result.getIconUrl());
+                        UserPrefs.getInstance().setTokenid(result.getTokenId());
                         getView().navigateToHome();
                         return;
                     }

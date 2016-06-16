@@ -12,7 +12,9 @@ import android.widget.ImageView;
 
 import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.ActivityUtils;
+import com.feicuiedu.treasure.user.UserPrefs;
 import com.feicuiedu.treasure.user.account.AccountActivity;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,6 +38,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         activityUtils = new ActivityUtils(this);
         setContentView(R.layout.activity_home);
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // 取出最新photoURL
+        String photoUrl = UserPrefs.getInstance().getPhoto();
+        if(photoUrl != null){
+            ImageLoader.getInstance().displayImage(photoUrl,ivUserIcon);
+        }
+    }
+
     @Override
     public void onContentChanged() {
         super.onContentChanged();

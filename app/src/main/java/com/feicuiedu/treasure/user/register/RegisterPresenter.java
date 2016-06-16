@@ -2,6 +2,7 @@ package com.feicuiedu.treasure.user.register;
 
 import com.feicuiedu.treasure.net.NetClient;
 import com.feicuiedu.treasure.user.User;
+import com.feicuiedu.treasure.user.UserPrefs;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
@@ -56,6 +57,7 @@ public class RegisterPresenter extends MvpNullObjectBasePresenter<RegisterView> 
                     // 得到响应结果(注册结果)
                     final RegisterResult result = gson.fromJson(body, RegisterResult.class);
                     if (result.getCode() == 1) {// 注册成功(@see 接口文档)
+                        UserPrefs.getInstance().setTokenid(result.getTokenId());
                         getView().navigateToHome();
                         return;
                     }

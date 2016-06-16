@@ -12,6 +12,7 @@ import retrofit2.Retrofit;
  */
 public class NetClient {
 
+    public static final String BASE_URL = "http://admin.syfeicuiedu.com";
     private static NetClient sClient;
 
     private final OkHttpClient client;
@@ -25,7 +26,7 @@ public class NetClient {
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://admin.syfeicuiedu.com")
+                .baseUrl(BASE_URL)
                 .client(client)
                 .build();
     }
