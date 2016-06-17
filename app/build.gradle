@@ -4,8 +4,15 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
+    /** 数据签名配置: 使用本模块(app)下的debug.keystore*/
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+        }
+    }
+
     defaultConfig {
-        applicationId "com.feicuiedu.treasure"
+        applicationId "com.feicuiedu.treasurehunter"
         minSdkVersion 17
         targetSdkVersion 23
         versionCode 1
@@ -17,24 +24,26 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
-
     compile 'com.hannesdorfmann.mosby:mvp:2.0.1'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
-
+    // circularimageview: 圆形的ImageView
     compile 'com.pkmmte.view:circularimageview:1.1'
-
+    // photocropper: 提取剪切照片时用到
     compile 'org.hybridsquad.android.photocropper:library:2.1.0'
-
+    // universal-image-loader
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    // 我们当前app模块要使用baidumap模块内容
+    compile project(':baidumap')
 }
 
 

@@ -17,10 +17,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
+
+        <!--百度地图Key设置-->
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="fMC1fwhqZ1LulL4rBz7lyrwNv6OwsdmX"/>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

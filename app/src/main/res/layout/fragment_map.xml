@@ -4,12 +4,8 @@
     android:layout_height="match_parent"
     tools:context="com.feicuiedu.refactorcoreth.treasure.home.map.MapFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.baidu.mapapi.map.MapView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        android:textSize="66sp"
-        android:text="@string/app_name" />
+        android:layout_height="match_parent"></com.baidu.mapapi.map.MapView>
 
 </FrameLayout>

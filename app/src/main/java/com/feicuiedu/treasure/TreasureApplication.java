@@ -2,6 +2,7 @@ package com.feicuiedu.treasure;
 
 import android.app.Application;
 
+import com.baidu.mapapi.SDKInitializer;
 import com.feicuiedu.treasure.user.UserPrefs;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -18,5 +19,7 @@ public class TreasureApplication extends Application{
         UserPrefs.init(this);
         // ImageLoader初始化配置
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(this));
+        // 百度地图init
+        SDKInitializer.initialize(getApplicationContext());
     }
 }

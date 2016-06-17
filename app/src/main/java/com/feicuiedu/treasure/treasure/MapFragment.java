@@ -12,7 +12,7 @@ import com.feicuiedu.treasure.R;
 /**
  * Created by Administrator on 2016/6/15 0015.
  */
-public class MapFragment extends Fragment{
+public class MapFragment extends Fragment {
 
     @Nullable
     @Override
