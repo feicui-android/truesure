@@ -1,4 +1,4 @@
-package com.feicuiedu.treasure.treasure;
+package com.feicuiedu.treasure.treasure.home;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;

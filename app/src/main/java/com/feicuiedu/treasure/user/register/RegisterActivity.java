@@ -14,11 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.feicuiedu.treasure.Constants;
-import com.feicuiedu.treasure.treasure.HomeActivity;
 import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.ActivityUtils;
 import com.feicuiedu.treasure.commons.RegexUtils;
 import com.feicuiedu.treasure.components.AlertDialogFragment;
+import com.feicuiedu.treasure.treasure.home.HomeActivity;
 import com.feicuiedu.treasure.user.User;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 

@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.feicuiedu.treasure.treasure.MapFragment"
+        android:name="com.feicuiedu.treasure.treasure.home.map.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar" />

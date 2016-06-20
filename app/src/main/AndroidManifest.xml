@@ -28,7 +28,6 @@
             android:enabled="true"
             android:process=":remote"></service>
 
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,7 +36,7 @@
         </activity>
         <activity android:name=".user.login.LoginActivity" />
         <activity android:name=".user.register.RegisterActivity" />
-        <activity android:name=".treasure.HomeActivity" />
+        <activity android:name=".treasure.home.map.HomeActivity" />
         <activity android:name=".user.account.AccountActivity"></activity>
     </application>
 

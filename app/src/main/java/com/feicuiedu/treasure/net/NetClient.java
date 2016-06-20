@@ -1,5 +1,6 @@
 package com.feicuiedu.treasure.net;
 
+import com.feicuiedu.treasure.treasure.TreasureApi;
 import com.feicuiedu.treasure.user.UserApi;
 
 import java.util.concurrent.TimeUnit;
@@ -36,6 +37,7 @@ public class NetClient {
     }
 
     private UserApi userApi;
+    private TreasureApi treasureApi;
 
     public UserApi getUserApi() {
         if(userApi == null){
@@ -44,6 +46,12 @@ public class NetClient {
         return userApi;
     }
 
+    public TreasureApi getTreasureApi() {
+        if (treasureApi == null) {
+            treasureApi = retrofit.create(TreasureApi.class);
+        }
+        return treasureApi;
+    }
 
     public static NetClient getInstance() {
         if (sClient == null) {

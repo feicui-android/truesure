@@ -1,6 +1,5 @@
-package com.feicuiedu.treasure.treasure;
+package com.feicuiedu.treasure.treasure.home.map;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -14,13 +13,23 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BaiduMapOptions;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.InfoWindow;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.LogUtils;
+import com.feicuiedu.treasure.treasure.Treasure;
+import com.hannesdorfmann.mosby.mvp.MvpFragment;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,7 +38,7 @@ import butterknife.OnClick;
 /**
  * Created by Administrator on 2016/6/15 0015.
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends MvpFragment<MapMvpView,MapPresenter> implements MapMvpView{
 
     private MapView mapView; // 地图视图
     private BaiduMap baiduMap;// 地图的操作类
@@ -37,10 +46,20 @@ public class MapFragment extends Fragment {
     @Bind(R.id.map_frame)
     FrameLayout mapFrame;
 
+    // 下方用来显示宝藏信息的layout(默认时是隐藏的)
+    @Bind(R.id.layout_bottom)FrameLayout bottomLayout;
+
+    private final BitmapDescriptor dot = BitmapDescriptorFactory.fromResource(R.drawable.treasure_dot);
+    private final BitmapDescriptor iconExpanded = BitmapDescriptorFactory.fromResource(R.drawable.treasure_expanded);
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_map, container, false);
+    }
+
+    @Override public MapPresenter createPresenter() {
+        return new MapPresenter();
     }
 
     @Override
@@ -65,8 +84,12 @@ public class MapFragment extends Fragment {
         mapFrame.addView(mapView, 0); // 将地图添加在最里层 (因为上面我们还放了其他布局内容)
         baiduMap = mapView.getMap();
         // 地图定位相关 ----------------------------------------------------------------------
-        // 激活我的位置(定位图层打开)
-        baiduMap.setMyLocationEnabled(true);
+        MyLocationConfiguration config = new MyLocationConfiguration(
+                MyLocationConfiguration.LocationMode.NORMAL,//定位图层显示方式, 默认为 LocationMode.NORMAL 普通态
+                false, // 是否允许显示方向信息
+                null // 设置用户自定义定位图标，可以为 null
+        );
+        baiduMap.setMyLocationConfigeration(config);
         initlocationClient();
     }
 
@@ -74,7 +97,9 @@ public class MapFragment extends Fragment {
     private LocationClient locationClient;
     private LatLng myLocation;
 
-    private void initlocationClient(){
+    private void initlocationClient() {
+        // 激活我的位置(定位图层打开)
+        baiduMap.setMyLocationEnabled(true);
         locationClient = new LocationClient(getActivity().getApplicationContext());
         locationClient.registerLocationListener(locationListener);// 注册监听
         // 定位设置
@@ -88,6 +113,8 @@ public class MapFragment extends Fragment {
         locationClient.requestLocation();
     }
 
+    // 定位SDK
+    // 地图ＳＤＫ
     private final BDLocationListener locationListener = new BDLocationListener() {
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
@@ -96,10 +123,11 @@ public class MapFragment extends Fragment {
                 locationClient.requestLocation();
                 return;
             }
+            LogUtils.d("LocType : " + bdLocation.getLocType());
             // 当前位置的经纬度
             double lon = bdLocation.getLongitude();
             double lat = bdLocation.getLatitude();
-            myLocation = new LatLng(lat,lon);
+            myLocation = new LatLng(lat, lon);
             LogUtils.d(bdLocation.getAddrStr());
             //
             MyLocationData myLocationData = new MyLocationData.Builder()
@@ -111,6 +139,42 @@ public class MapFragment extends Fragment {
             baiduMap.setMyLocationData(myLocationData);
             // 移动到当前位置上去
             animateMovetoMyLocation();
+
+            // 测试代码,在当前位置附近加一个标记 Market
+            LatLng latLng = new LatLng(lat - 0.1f, lon - 0.1f);
+            addMarker(latLng);
+            // 对Marker进行click监听
+            baiduMap.setOnMarkerClickListener(markerClickListener);
+        }
+    };
+
+    private void addMarker(final LatLng position) {
+        MarkerOptions options = new MarkerOptions();
+        options.icon(dot); // 设置Marker的图标
+        options.anchor(0.5f, 0.5f); // 设置Marker的锚点(居中)
+        options.position(position); // 设置Marker的位置
+        baiduMap.addOverlay(options);
+    }
+
+    private Marker selectedMarker; // 当前选择的Marker
+
+    private final BaiduMap.OnMarkerClickListener markerClickListener = new BaiduMap.OnMarkerClickListener() {
+        @Override public boolean onMarkerClick(Marker marker) {
+            selectedMarker = marker;
+            marker.setVisible(false); // 将当前click的marker设置不可见
+            InfoWindow infoWindow = new InfoWindow(iconExpanded, marker.getPosition(), 0, infoWindowClickListener);
+            baiduMap.showInfoWindow(infoWindow);
+            // 显示出下方UI
+            bottomLayout.setVisibility(View.VISIBLE);
+            return false;
+        }
+    };
+
+    private InfoWindow.OnInfoWindowClickListener infoWindowClickListener = new InfoWindow.OnInfoWindowClickListener() {
+        @Override public void onInfoWindowClick() {
+            selectedMarker.setVisible(true);
+            baiduMap.hideInfoWindow();
+            bottomLayout.setVisibility(View.GONE);
         }
     };
 
@@ -148,5 +212,13 @@ public class MapFragment extends Fragment {
         // 对指南进行激活的设置
         boolean isCompass = baiduMap.getUiSettings().isCompassEnabled();
         baiduMap.getUiSettings().setCompassEnabled(!isCompass);
+    }
+
+    @Override public void showMessage(String msg) {
+
+    }
+
+    @Override public void setData(List<Treasure> data) {
+        // 在这里将每个 Treasure 添加到地图上，做为Marker
     }
 }
