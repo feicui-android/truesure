@@ -27,6 +27,7 @@ import com.baidu.mapapi.model.LatLng;
 import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.LogUtils;
 import com.feicuiedu.treasure.treasure.Treasure;
+import com.feicuiedu.treasure.treasure.home.Area;
 import com.hannesdorfmann.mosby.mvp.MvpFragment;
 
 import java.util.List;
@@ -38,7 +39,7 @@ import butterknife.OnClick;
 /**
  * Created by Administrator on 2016/6/15 0015.
  */
-public class MapFragment extends MvpFragment<MapMvpView,MapPresenter> implements MapMvpView{
+public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implements MapMvpView {
 
     private MapView mapView; // 地图视图
     private BaiduMap baiduMap;// 地图的操作类
@@ -47,7 +48,7 @@ public class MapFragment extends MvpFragment<MapMvpView,MapPresenter> implements
     FrameLayout mapFrame;
 
     // 下方用来显示宝藏信息的layout(默认时是隐藏的)
-    @Bind(R.id.layout_bottom)FrameLayout bottomLayout;
+    @Bind(R.id.layout_bottom) FrameLayout bottomLayout;
 
     private final BitmapDescriptor dot = BitmapDescriptorFactory.fromResource(R.drawable.treasure_dot);
     private final BitmapDescriptor iconExpanded = BitmapDescriptorFactory.fromResource(R.drawable.treasure_expanded);
@@ -91,6 +92,22 @@ public class MapFragment extends MvpFragment<MapMvpView,MapPresenter> implements
         );
         baiduMap.setMyLocationConfigeration(config);
         initlocationClient();
+        // 地图状态进行监听
+        baiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
+            @Override public void onMapStatusChangeStart(MapStatus mapStatus) {
+
+            }
+
+            @Override public void onMapStatusChange(MapStatus mapStatus) {
+
+            }
+
+            @Override public void onMapStatusChangeFinish(MapStatus mapStatus) {
+                updateMapArea();
+            }
+        });
+        // 对Marker进行click监听
+        baiduMap.setOnMarkerClickListener(markerClickListener);
     }
 
     // 定位的核心 API
@@ -139,22 +156,8 @@ public class MapFragment extends MvpFragment<MapMvpView,MapPresenter> implements
             baiduMap.setMyLocationData(myLocationData);
             // 移动到当前位置上去
             animateMovetoMyLocation();
-
-            // 测试代码,在当前位置附近加一个标记 Market
-            LatLng latLng = new LatLng(lat - 0.1f, lon - 0.1f);
-            addMarker(latLng);
-            // 对Marker进行click监听
-            baiduMap.setOnMarkerClickListener(markerClickListener);
         }
     };
-
-    private void addMarker(final LatLng position) {
-        MarkerOptions options = new MarkerOptions();
-        options.icon(dot); // 设置Marker的图标
-        options.anchor(0.5f, 0.5f); // 设置Marker的锚点(居中)
-        options.position(position); // 设置Marker的位置
-        baiduMap.addOverlay(options);
-    }
 
     private Marker selectedMarker; // 当前选择的Marker
 
@@ -182,7 +185,7 @@ public class MapFragment extends MvpFragment<MapMvpView,MapPresenter> implements
         MapStatus.Builder builder = new MapStatus.Builder();
         builder.target(myLocation);// 当前位置
         builder.rotate(0); // 地图摆正
-        builder.zoom(19); // 
+        builder.zoom(19); //
         baiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
     }
 
@@ -220,5 +223,32 @@ public class MapFragment extends MvpFragment<MapMvpView,MapPresenter> implements
 
     @Override public void setData(List<Treasure> data) {
         // 在这里将每个 Treasure 添加到地图上，做为Marker
+        for (Treasure treasure : data) {
+            LatLng latLng = new LatLng(treasure.getLatitude(), treasure.getLongitude());
+            addMarker(latLng);
+        }
+    }
+
+    private void addMarker(final LatLng position) {
+        MarkerOptions options = new MarkerOptions();
+        options.icon(dot); // 设置Marker的图标
+        options.anchor(0.5f, 0.5f); // 设置Marker的锚点(居中)
+        options.position(position); // 设置Marker的位置
+        baiduMap.addOverlay(options);
+    }
+
+    private void updateMapArea() {
+        // 取得当前地图的状态(是想拿位置)
+        MapStatus mapStatus = baiduMap.getMapStatus();
+        double lng = mapStatus.target.longitude; // 12.433     --- 13   12
+        double lat = mapStatus.target.latitude;  // 23.23432   --- 24   23
+        // 确定及创建出"区域"
+        Area area = new Area();
+        area.setMaxLat(Math.ceil(lat)); // 向上取整
+        area.setMaxLng(Math.ceil(lng));
+        area.setMinLat(Math.floor(lat)); // 向下取整
+        area.setMinLng(Math.floor(lng));
+        // 业务逻辑进行宝藏数据获取
+        getPresenter().getTreasure(area);
     }
 }

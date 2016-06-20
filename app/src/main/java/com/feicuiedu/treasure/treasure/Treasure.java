@@ -36,8 +36,6 @@ public class Treasure {
     @SerializedName("htsize")
     private int size;
 
-    transient private double distance; // 非json数据，不进行序列化
-
     public int getId() {
         return id;
     }
@@ -71,12 +69,6 @@ public class Treasure {
     }
 
     public double distanceToMyLocation() {
-//        LatLng target = new LatLng(latitude, longitude);
-//        LatLng myLocation = MapFragment.getMyLocation();
-//
-//        if (myLocation != null){
-//            return DistanceUtil.getDistance(target, myLocation);
-//        }
         return 0;
     }
 }
