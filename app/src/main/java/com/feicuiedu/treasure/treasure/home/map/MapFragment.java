@@ -26,7 +26,9 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.LogUtils;
+import com.feicuiedu.treasure.components.TreasureView;
 import com.feicuiedu.treasure.treasure.Treasure;
+import com.feicuiedu.treasure.treasure.TreasureRepo;
 import com.feicuiedu.treasure.treasure.home.Area;
 import com.hannesdorfmann.mosby.mvp.MvpFragment;
 
@@ -49,6 +51,7 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
 
     // 下方用来显示宝藏信息的layout(默认时是隐藏的)
     @Bind(R.id.layout_bottom) FrameLayout bottomLayout;
+    @Bind(R.id.treasureView) TreasureView treasureView;// 显示宝藏信息的卡片
 
     private final BitmapDescriptor dot = BitmapDescriptorFactory.fromResource(R.drawable.treasure_dot);
     private final BitmapDescriptor iconExpanded = BitmapDescriptorFactory.fromResource(R.drawable.treasure_expanded);
@@ -169,6 +172,12 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
             baiduMap.showInfoWindow(infoWindow);
             // 显示出下方UI
             bottomLayout.setVisibility(View.VISIBLE);
+            treasureView.setVisibility(View.VISIBLE);
+            // 将当前宝藏数据适配显示到下方UI上
+            // UI: treasureView
+            int treasureID = marker.getExtraInfo().getInt("id");
+            Treasure treasure = TreasureRepo.getInstance().getTreasure(treasureID);
+            treasureView.bindTreasure(treasure);
             return false;
         }
     };
@@ -225,15 +234,19 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
         // 在这里将每个 Treasure 添加到地图上，做为Marker
         for (Treasure treasure : data) {
             LatLng latLng = new LatLng(treasure.getLatitude(), treasure.getLongitude());
-            addMarker(latLng);
+            addMarker(latLng, treasure.getId());
         }
     }
 
-    private void addMarker(final LatLng position) {
+    private void addMarker(final LatLng position,final int treasureID) {
         MarkerOptions options = new MarkerOptions();
         options.icon(dot); // 设置Marker的图标
         options.anchor(0.5f, 0.5f); // 设置Marker的锚点(居中)
         options.position(position); // 设置Marker的位置
+        // 存入宝藏的ID号到每个Marker
+        Bundle bundle = new Bundle();
+        bundle.putInt("id",treasureID);
+        options.extraInfo(bundle);
         baiduMap.addOverlay(options);
     }
 
