@@ -1,7 +1,9 @@
 package com.feicuiedu.treasure.treasure;
 
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
+import com.feicuiedu.treasure.treasure.home.Area;
+
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -12,5 +14,5 @@ import retrofit2.http.POST;
 public interface TreasureApi {
 
     @POST("/Handler/TreasureHandler.ashx?action=show")
-    Call<ResponseBody> getTreasureInArea(@Body RequestBody body);
+    Call<List<Treasure>> getTreasureInArea(@Body Area body);
 }
