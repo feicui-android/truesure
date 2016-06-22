@@ -135,6 +135,14 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"/>
 
+            <!--用来录入宝藏信息的卡片(藏宝时)-->
+            <include
+                android:id="@+id/hide_treasure"
+                layout="@layout/hide_treasure"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
         </FrameLayout>
     </LinearLayout>
 

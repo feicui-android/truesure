@@ -3,10 +3,14 @@ package com.feicuiedu.treasure.treasure.home.map;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -50,6 +54,18 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
 
     @Bind(R.id.map_frame)
     FrameLayout mapFrame;
+
+    @Bind(R.id.centerLayout)
+    RelativeLayout conterLayout;
+
+    @Bind(R.id.hide_treasure)
+    RelativeLayout hideTreasure;
+
+    @Bind(R.id.btn_HideHere)
+    Button btnHideHere;
+
+    @Bind(R.id.et_treasureTitle)
+    EditText etTreasureTitle;
 
     // 下方用来显示宝藏信息的layout(默认时是隐藏的)
     @Bind(R.id.layout_bottom) FrameLayout bottomLayout;
@@ -125,7 +141,7 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
     private LocationClient locationClient;
     private static LatLng myLocation;
 
-    public static LatLng getMyLocation(){
+    public static LatLng getMyLocation() {
         return myLocation;
     }
 
@@ -169,7 +185,7 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
                     .build();
             // 设置我的位置
             baiduMap.setMyLocationData(myLocationData);
-            if(isFirstLocated) {
+            if (isFirstLocated) {
                 // 移动到当前位置上去
                 animateMovetoMyLocation();
                 isFirstLocated = false;
@@ -181,19 +197,18 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
 
     private final BaiduMap.OnMarkerClickListener markerClickListener = new BaiduMap.OnMarkerClickListener() {
         @Override public boolean onMarkerClick(Marker marker) {
-            if(selectedMarker != null)selectedMarker.setVisible(true);
+            if (selectedMarker != null) selectedMarker.setVisible(true);
             selectedMarker = marker;
             marker.setVisible(false); // 将当前click的marker设置不可见
             InfoWindow infoWindow = new InfoWindow(iconExpanded, marker.getPosition(), 0, infoWindowClickListener);
             baiduMap.showInfoWindow(infoWindow);
-            // 显示出下方UI
-            bottomLayout.setVisibility(View.VISIBLE);
-            treasureView.setVisibility(View.VISIBLE);
             // 将当前宝藏数据适配显示到下方UI上
             // UI: treasureView
             int treasureID = marker.getExtraInfo().getInt("id");
             Treasure treasure = TreasureRepo.getInstance().getTreasure(treasureID);
             treasureView.bindTreasure(treasure);
+            // UI模式更改 (选中某一个marker时)
+            changeUiMode(UI_MODE_SELECT);
             return false;
         }
     };
@@ -202,13 +217,14 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
         @Override public void onInfoWindowClick() {
             selectedMarker.setVisible(true);
             baiduMap.hideInfoWindow();
-            bottomLayout.setVisibility(View.GONE);
+            // UI模式更改 (普通模式)
+            changeUiMode(UI_MODE_NORMAL);
         }
     };
 
     @OnClick(R.id.tv_located)
     public void animateMovetoMyLocation() {
-        if(myLocation == null)activityUtils.showToast(R.string.locate_not_success);
+        if (myLocation == null) activityUtils.showToast(R.string.locate_not_success);
 
         MapStatus.Builder builder = new MapStatus.Builder();
         builder.target(myLocation);// 当前位置
@@ -244,6 +260,18 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
         boolean isCompass = baiduMap.getUiSettings().isCompassEnabled();
         baiduMap.getUiSettings().setCompassEnabled(!isCompass);
     }
+
+    @OnClick(R.id.hide_treasure)
+    public void hideTreasure() {
+        activityUtils.hideSoftKeyboard();
+        String title = etTreasureTitle.getText().toString();
+        if(TextUtils.isEmpty(title)){
+            activityUtils.showToast(R.string.please_input_title);
+            return;
+        }
+        activityUtils.showToast("埋藏宝藏处理...");
+    }
+
     @Override public void showMessage(String msg) {
 
     }
@@ -256,14 +284,14 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
         }
     }
 
-    private void addMarker(final LatLng position,final int treasureID) {
+    private void addMarker(final LatLng position, final int treasureID) {
         MarkerOptions options = new MarkerOptions();
         options.icon(dot); // 设置Marker的图标
         options.anchor(0.5f, 0.5f); // 设置Marker的锚点(居中)
         options.position(position); // 设置Marker的位置
         // 存入宝藏的ID号到每个Marker
         Bundle bundle = new Bundle();
-        bundle.putInt("id",treasureID);
+        bundle.putInt("id", treasureID);
         options.extraInfo(bundle);
         baiduMap.addOverlay(options);
     }
@@ -281,5 +309,54 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
         area.setMinLng(Math.floor(lng));
         // 业务逻辑进行宝藏数据获取
         getPresenter().getTreasure(area);
+    }
+
+    // HomeActivity按下埋藏宝藏时
+    public void onHidePressed(){
+        changeUiMode(UI_MODE_HIDE);
+    }
+
+    /**HomeActivity按下back按钮时*/
+    public boolean onBackPressed(){
+        if(this.uiMode != UI_MODE_NORMAL){
+            changeUiMode(UI_MODE_NORMAL);
+            return false;
+        }
+        return true;
+    }
+
+    private static final int UI_MODE_NORMAL = 0; // 普通(Map查看模块)
+    private static final int UI_MODE_SELECT = 1;
+    private static final int UI_MODE_HIDE = 2;
+
+    private int uiMode = UI_MODE_NORMAL;
+
+    private void changeUiMode(int uiMode) {
+        if (this.uiMode == uiMode) return;
+        this.uiMode = uiMode;
+        switch (uiMode) {
+            case UI_MODE_NORMAL:
+                bottomLayout.setVisibility(View.GONE);// 隐藏下方的宝藏信息layout
+                conterLayout.setVisibility(View.GONE);// 隐藏中间位置藏宝layout
+                break;
+            case UI_MODE_SELECT:
+                bottomLayout.setVisibility(View.VISIBLE);// 显示下方的宝藏信息layout
+                treasureView.setVisibility(View.VISIBLE);// 显示宝藏信息卡片
+                conterLayout.setVisibility(View.GONE); // 隐藏中间位置藏宝layout
+                hideTreasure.setVisibility(View.GONE); // 隐藏宝藏录入信息卡片
+                break;
+            case UI_MODE_HIDE:
+                conterLayout.setVisibility(View.VISIBLE);// 显示中间位置藏宝layout
+                bottomLayout.setVisibility(View.GONE);// 隐藏下方的宝藏信息layout
+                // 按下藏宝时
+                btnHideHere.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View v) {
+                        bottomLayout.setVisibility(View.VISIBLE);// 显示下方的宝藏信息layout
+                        hideTreasure.setVisibility(View.VISIBLE);// 显示宝藏录入信息卡片
+                        treasureView.setVisibility(View.GONE);// 隐藏宝藏信息卡片
+                    }
+                });
+                break;
+        }
     }
 }

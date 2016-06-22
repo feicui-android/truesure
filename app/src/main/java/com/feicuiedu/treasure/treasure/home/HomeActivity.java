@@ -2,6 +2,8 @@ package com.feicuiedu.treasure.treasure.home;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +14,8 @@ import android.widget.ImageView;
 
 import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.ActivityUtils;
+import com.feicuiedu.treasure.treasure.TreasureRepo;
+import com.feicuiedu.treasure.treasure.home.map.MapFragment;
 import com.feicuiedu.treasure.user.UserPrefs;
 import com.feicuiedu.treasure.user.account.AccountActivity;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -32,11 +36,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private ActivityUtils activityUtils;
 
+    private MapFragment mapFragment;
+    private FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityUtils = new ActivityUtils(this);
         setContentView(R.layout.activity_home);
+        fragmentManager = getSupportFragmentManager();
+        mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.mapFragment);
+        TreasureRepo.getInstance().clear();
     }
 
     @Override
@@ -81,7 +91,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_hide:
-                activityUtils.showToast(R.string.hide_treasure);
+                drawerLayout.closeDrawer(GravityCompat.START);
+                mapFragment.onHidePressed();
                 break;
             case R.id.menu_item_my_list:
                 activityUtils.showToast(R.string.my_list);
@@ -95,4 +106,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         return false;
     }
+
+    @Override public void onBackPressed() {
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }else{
+            // 如果mapFragment那边，是做了模式切换,这一次back完成了
+            // 如果................没有做模式切换,这一次back还是原操作
+            if(mapFragment.onBackPressed()){
+                super.onBackPressed();
+            }
+        }
+    }
 }
+
+
+
