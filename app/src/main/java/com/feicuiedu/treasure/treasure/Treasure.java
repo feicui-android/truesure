@@ -1,6 +1,9 @@
 package com.feicuiedu.treasure.treasure;
 
 
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.DistanceUtil;
+import com.feicuiedu.treasure.treasure.home.map.MapFragment;
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
@@ -69,6 +72,12 @@ public class Treasure {
     }
 
     public double distanceToMyLocation() {
-        return 0;
+
+        LatLng target = new LatLng(latitude,longitude);     // 当前宝藏位置
+        LatLng myLocation = MapFragment.getMyLocation();// "我的位置" -- MapFragment
+        if(myLocation == null){
+            return 0;
+        }
+        return DistanceUtil.getDistance(target,myLocation);
     }
 }

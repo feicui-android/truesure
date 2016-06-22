@@ -51,7 +51,7 @@ public class TreasureView extends RelativeLayout implements View.OnClickListener
         this.treasure = treasure;
         tvTitle.setText(treasure.getTitle());
         tvLocation.setText(treasure.getLocation());
-        double distance = treasure.distanceToMyLocation();
+        double distance = treasure.distanceToMyLocation(); // 计算出宝藏和当前位置的距离
         DecimalFormat decimalFormat = new DecimalFormat("#0.0");
         String text = decimalFormat.format(distance / 1000) + "km";
         tvDistance.setText(text);

@@ -1,5 +1,6 @@
 package com.feicuiedu.treasure.treasure.home.map;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.feicuiedu.treasure.R;
+import com.feicuiedu.treasure.commons.ActivityUtils;
 import com.feicuiedu.treasure.commons.LogUtils;
 import com.feicuiedu.treasure.components.TreasureView;
 import com.feicuiedu.treasure.treasure.Treasure;
@@ -53,8 +55,14 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
     @Bind(R.id.layout_bottom) FrameLayout bottomLayout;
     @Bind(R.id.treasureView) TreasureView treasureView;// 显示宝藏信息的卡片
 
+    private ActivityUtils activityUtils;
     private final BitmapDescriptor dot = BitmapDescriptorFactory.fromResource(R.drawable.treasure_dot);
     private final BitmapDescriptor iconExpanded = BitmapDescriptorFactory.fromResource(R.drawable.treasure_expanded);
+
+    @Override public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        activityUtils = new ActivityUtils(activity);
+    }
 
     @Nullable
     @Override
@@ -115,7 +123,11 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
 
     // 定位的核心 API
     private LocationClient locationClient;
-    private LatLng myLocation;
+    private static LatLng myLocation;
+
+    public static LatLng getMyLocation(){
+        return myLocation;
+    }
 
     private void initlocationClient() {
         // 激活我的位置(定位图层打开)
@@ -157,15 +169,19 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
                     .build();
             // 设置我的位置
             baiduMap.setMyLocationData(myLocationData);
-            // 移动到当前位置上去
-            animateMovetoMyLocation();
+            if(isFirstLocated) {
+                // 移动到当前位置上去
+                animateMovetoMyLocation();
+                isFirstLocated = false;
+            }
         }
     };
-
+    private boolean isFirstLocated = true;
     private Marker selectedMarker; // 当前选择的Marker
 
     private final BaiduMap.OnMarkerClickListener markerClickListener = new BaiduMap.OnMarkerClickListener() {
         @Override public boolean onMarkerClick(Marker marker) {
+            if(selectedMarker != null)selectedMarker.setVisible(true);
             selectedMarker = marker;
             marker.setVisible(false); // 将当前click的marker设置不可见
             InfoWindow infoWindow = new InfoWindow(iconExpanded, marker.getPosition(), 0, infoWindowClickListener);
@@ -190,7 +206,10 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
         }
     };
 
+    @OnClick(R.id.tv_located)
     public void animateMovetoMyLocation() {
+        if(myLocation == null)activityUtils.showToast(R.string.locate_not_success);
+
         MapStatus.Builder builder = new MapStatus.Builder();
         builder.target(myLocation);// 当前位置
         builder.rotate(0); // 地图摆正
@@ -225,7 +244,6 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
         boolean isCompass = baiduMap.getUiSettings().isCompassEnabled();
         baiduMap.getUiSettings().setCompassEnabled(!isCompass);
     }
-
     @Override public void showMessage(String msg) {
 
     }
