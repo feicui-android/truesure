@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,6 +37,8 @@ import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.ActivityUtils;
 import com.feicuiedu.treasure.commons.LogUtils;
@@ -67,6 +70,7 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
     @Bind(R.id.et_treasureTitle) EditText etTreasureTitle;// 信息录入编辑框(埋藏宝藏时)
     @Bind(R.id.centerLayout) RelativeLayout conterLayout; // 埋藏宝藏时的layout
     @Bind(R.id.btn_HideHere) Button btnHideHere; // 埋藏宝藏时的按钮
+    @Bind(R.id.iv_located) ImageView ivLocated;
     @Bind(R.id.tv_currentLocation) TextView tvCurrentLocation;
 
 
@@ -220,8 +224,12 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
     private LatLng targe; // 当前地图中心位置,仅仅为了保存位置，防止重复的触发
     // 地图状态更改监听
     private final BaiduMap.OnMapStatusChangeListener mapStatusChangeListener = new BaiduMap.OnMapStatusChangeListener() {
-        @Override public void onMapStatusChangeStart(MapStatus mapStatus) {}
-        @Override public void onMapStatusChange(MapStatus mapStatus) {}
+        @Override public void onMapStatusChangeStart(MapStatus mapStatus) {
+        }
+
+        @Override public void onMapStatusChange(MapStatus mapStatus) {
+        }
+
         @Override public void onMapStatusChangeFinish(MapStatus mapStatus) {
             LatLng target = mapStatus.target;
             // 位置变化了(在地图视角变化、缩放等操作时，也是状态更改)
@@ -229,6 +237,11 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
                 if (uiMode == UI_MODE_HIDE) {
                     // 在埋藏宝藏的模式下时,开始反地理编码
                     geoCoder.reverseGeoCode(new ReverseGeoCodeOption().location(target));
+                    // 反弹动画
+                    YoYo.with(Techniques.Bounce).duration(1000).playOn(ivLocated);
+                    YoYo.with(Techniques.Bounce).duration(1000).playOn(btnHideHere);
+                    // 淡入动画
+                    YoYo.with(Techniques.FadeIn).duration(1000).playOn(btnHideHere);
                 }
                 // 重新获取宝藏
                 if (myLocation != null) {
@@ -382,6 +395,7 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
                 treasureView.setVisibility(View.VISIBLE);// 显示宝藏信息卡片
                 conterLayout.setVisibility(View.GONE); // 隐藏中间位置藏宝layout
                 hideTreasure.setVisibility(View.GONE); // 隐藏宝藏录入信息卡片
+                YoYo.with(Techniques.BounceInUp).duration(500).playOn(bottomLayout);
                 break;
             case UI_MODE_HIDE:
                 conterLayout.setVisibility(View.VISIBLE);// 显示中间位置藏宝layout
@@ -392,6 +406,7 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
                         bottomLayout.setVisibility(View.VISIBLE);// 显示下方的宝藏信息layout
                         hideTreasure.setVisibility(View.VISIBLE);// 显示宝藏录入信息卡片
                         treasureView.setVisibility(View.GONE);// 隐藏宝藏信息卡片
+                        YoYo.with(Techniques.FlipInX).duration(500).playOn(bottomLayout);
                     }
                 });
                 break;

@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.ActivityUtils;
 import com.feicuiedu.treasure.treasure.TreasureRepo;
+import com.feicuiedu.treasure.treasure.home.list.TreasureListFragment;
 import com.feicuiedu.treasure.treasure.home.map.MapFragment;
 import com.feicuiedu.treasure.user.UserPrefs;
 import com.feicuiedu.treasure.user.account.AccountActivity;
@@ -36,6 +38,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private ActivityUtils activityUtils;
 
+    private TreasureListFragment listFragment;
     private MapFragment mapFragment;
     private FragmentManager fragmentManager;
 
@@ -47,6 +50,48 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         fragmentManager = getSupportFragmentManager();
         mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.mapFragment);
         TreasureRepo.getInstance().clear();
+    }
+
+    // 创建
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_home, menu);
+        return true;
+    }
+
+    @Override public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_toggle);
+        if(listFragment != null && listFragment.isAdded()){
+            item.setIcon(R.drawable.ic_map);
+        }
+        else {
+            item.setIcon(R.drawable.ic_view_list);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    // 选中
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_toggle:
+                showListFragment();
+                // 通过此方法能使得onPrepareOptionsMenu方法得到触发
+                invalidateOptionsMenu();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showListFragment(){
+        if(listFragment != null && listFragment.isAdded()){
+            fragmentManager.popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragmentManager.beginTransaction().remove(listFragment).commit();
+        }else{
+            listFragment = new TreasureListFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, listFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     @Override
