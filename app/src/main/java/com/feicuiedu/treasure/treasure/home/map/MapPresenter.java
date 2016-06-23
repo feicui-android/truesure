@@ -1,7 +1,7 @@
 package com.feicuiedu.treasure.treasure.home.map;
 
 import com.feicuiedu.treasure.net.NetClient;
-import com.feicuiedu.treasure.treasure.Treasure;
+import com.feicuiedu.treasure.treasure.home.Treasure;
 import com.feicuiedu.treasure.treasure.TreasureRepo;
 import com.feicuiedu.treasure.treasure.home.Area;
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;

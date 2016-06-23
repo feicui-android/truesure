@@ -1,10 +1,12 @@
 package com.feicuiedu.treasure.treasure.home.list;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.feicuiedu.treasure.components.TreasureView;
-import com.feicuiedu.treasure.treasure.Treasure;
+import com.feicuiedu.treasure.treasure.detail.TreasureDetailActivity;
+import com.feicuiedu.treasure.treasure.home.Treasure;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,9 +19,14 @@ public class TreasuresAdapter extends RecyclerView.Adapter<TreasuresAdapter.MyVi
         return new MyViewHolder(new TreasureView(parent.getContext()));
     }
 
-    @Override public void onBindViewHolder(MyViewHolder holder, int position) {
-        Treasure treasure = datas.get(position);
+    @Override public void onBindViewHolder(final MyViewHolder holder, int position) {
+        final Treasure treasure = datas.get(position);
         holder.treasureView.bindTreasure(treasure);
+        holder.treasureView.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                TreasureDetailActivity.open(v.getContext(), treasure);
+            }
+        });
     }
 
     @Override public int getItemCount() {

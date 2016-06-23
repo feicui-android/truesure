@@ -1,6 +1,6 @@
 package com.feicuiedu.treasure.treasure.home.map;
 
-import com.feicuiedu.treasure.treasure.Treasure;
+import com.feicuiedu.treasure.treasure.home.Treasure;
 import com.hannesdorfmann.mosby.mvp.MvpView;
 
 import java.util.List;

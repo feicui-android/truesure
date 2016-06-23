@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.feicuiedu.treasure.R;
-import com.feicuiedu.treasure.treasure.Treasure;
+import com.feicuiedu.treasure.treasure.home.Treasure;
 
 import java.text.DecimalFormat;
 

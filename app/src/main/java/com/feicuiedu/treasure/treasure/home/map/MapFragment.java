@@ -43,10 +43,11 @@ import com.feicuiedu.treasure.R;
 import com.feicuiedu.treasure.commons.ActivityUtils;
 import com.feicuiedu.treasure.commons.LogUtils;
 import com.feicuiedu.treasure.components.TreasureView;
-import com.feicuiedu.treasure.treasure.Treasure;
+import com.feicuiedu.treasure.treasure.detail.TreasureDetailActivity;
+import com.feicuiedu.treasure.treasure.home.Treasure;
 import com.feicuiedu.treasure.treasure.TreasureRepo;
 import com.feicuiedu.treasure.treasure.home.Area;
-import com.feicuiedu.treasure.treasure.home.hide.HideTreasureActivity;
+import com.feicuiedu.treasure.treasure.hide.HideTreasureActivity;
 import com.hannesdorfmann.mosby.mvp.MvpFragment;
 
 import java.util.List;
@@ -196,6 +197,7 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
         }
     };
 
+
     // Marker监听
     private final BaiduMap.OnMarkerClickListener markerClickListener = new BaiduMap.OnMarkerClickListener() {
         @Override public boolean onMarkerClick(Marker marker) {
@@ -321,11 +323,18 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
             activityUtils.showToast(R.string.please_input_title);
             return;
         }
-        HideTreasureActivity.open(getContext(),title,address,baiduMap.getMapStatus().target,altitude);
+        HideTreasureActivity.open(getContext(), title, address, baiduMap.getMapStatus().target, altitude);
+    }
+
+    @OnClick(R.id.treasureView)
+    public void clickTreasureView() {
+        int treasureID = selectedMarker.getExtraInfo().getInt("id");
+        Treasure treasure = TreasureRepo.getInstance().getTreasure(treasureID);
+        TreasureDetailActivity.open(getContext(), treasure);
     }
 
     @Override public void showMessage(String msg) {
-
+        activityUtils.showToast(msg);
     }
 
     @Override public void setData(List<Treasure> data) {

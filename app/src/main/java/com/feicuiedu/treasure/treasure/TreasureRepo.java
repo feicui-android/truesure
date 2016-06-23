@@ -1,6 +1,7 @@
 package com.feicuiedu.treasure.treasure;
 
 import com.feicuiedu.treasure.treasure.home.Area;
+import com.feicuiedu.treasure.treasure.home.Treasure;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -39,7 +39,9 @@
         <activity android:name=".user.register.RegisterActivity"/>
         <activity android:name=".treasure.home.HomeActivity"/>
         <activity android:name=".user.account.AccountActivity"/>
-        <activity android:name=".treasure.home.hide.HideTreasureActivity">
+        <activity android:name=".treasure.hide.HideTreasureActivity">
+        </activity>
+        <activity android:name=".treasure.detail.TreasureDetailActivity">
         </activity>
     </application>
 

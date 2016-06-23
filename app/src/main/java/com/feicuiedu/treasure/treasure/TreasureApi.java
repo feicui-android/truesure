@@ -1,8 +1,13 @@
 package com.feicuiedu.treasure.treasure;
 
+import com.feicuiedu.treasure.treasure.detail.TreasureDetail;
+import com.feicuiedu.treasure.treasure.detail.TreasureDetailResult;
+import com.feicuiedu.treasure.treasure.detail.TreasureFind;
+import com.feicuiedu.treasure.treasure.detail.TreasureFindResult;
+import com.feicuiedu.treasure.treasure.hide.HideTreasure;
+import com.feicuiedu.treasure.treasure.hide.HideTreasureResult;
 import com.feicuiedu.treasure.treasure.home.Area;
-import com.feicuiedu.treasure.treasure.home.hide.HideTreasure;
-import com.feicuiedu.treasure.treasure.home.hide.HideTreasureResult;
+import com.feicuiedu.treasure.treasure.home.Treasure;
 
 import java.util.List;
 
@@ -20,4 +25,10 @@ public interface TreasureApi {
 
     @POST("/Handler/TreasureHandler.ashx?action=hide")
     Call<HideTreasureResult> hideTreasure(@Body HideTreasure body);
+
+    @POST("/Handler/TreasureHandler.ashx?action=tdetails")
+    Call<List<TreasureDetailResult>> getTreasureDetail(@Body TreasureDetail body);
+
+    @POST("/Handler/TreasureHandler.ashx?action=find")
+    Call<TreasureFindResult> findTreasure(@Body TreasureFind body);
 }

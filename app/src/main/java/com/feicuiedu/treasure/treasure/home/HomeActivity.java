@@ -52,6 +52,43 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         TreasureRepo.getInstance().clear();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // 取出最新photoURL
+        String photoUrl = UserPrefs.getInstance().getPhoto();
+        if(photoUrl != null){
+            ImageLoader.getInstance().displayImage(photoUrl,ivUserIcon);
+        }
+    }
+
+    @Override
+    public void onContentChanged() {
+        super.onContentChanged();
+        ButterKnife.bind(this);
+        // ----------------------------------------------------------------------  1
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);// TITLE --- false
+        navigationView.setNavigationItemSelectedListener(this); // 对navigationView进行Menu监听
+        // ----------------------------------------------------------------------  3
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle( // drawerLayout监听(Toolbar VS DrawLayout)
+                this,
+                drawerLayout,     // Drawer     抽屉
+                toolbar,          // ActionBar
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        );
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        // ----------------------------------------------------------------------  2
+        ivUserIcon = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_userIcon);// 注意：不能用ButterKnife拿到
+        ivUserIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activityUtils.startActivity(AccountActivity.class);
+            }
+        });
+    }
     // 创建
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_home, menu);
@@ -92,44 +129,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     .addToBackStack(null)
                     .commit();
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // 取出最新photoURL
-        String photoUrl = UserPrefs.getInstance().getPhoto();
-        if(photoUrl != null){
-            ImageLoader.getInstance().displayImage(photoUrl,ivUserIcon);
-        }
-    }
-
-    @Override
-    public void onContentChanged() {
-        super.onContentChanged();
-        ButterKnife.bind(this);
-        // ----------------------------------------------------------------------  1
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);// TITLE --- false
-        navigationView.setNavigationItemSelectedListener(this); // 对navigationView进行Menu监听
-        // ----------------------------------------------------------------------  3
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle( // drawerLayout监听(Toolbar VS DrawLayout)
-                this,
-                drawerLayout,     // Drawer     抽屉
-                toolbar,          // ActionBar
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close
-        );
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-        // ----------------------------------------------------------------------  2
-        ivUserIcon = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_userIcon);// 注意：不能用ButterKnife拿到
-        ivUserIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activityUtils.startActivity(AccountActivity.class);
-            }
-        });
     }
 
     @Override

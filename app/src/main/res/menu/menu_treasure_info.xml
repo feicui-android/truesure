@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".presentation.view.activity.MyListActivity">
+    <item
+        android:id="@+id/action_find"
+        android:orderInCategory="100"
+        android:title="@string/find_treasure"
+        android:icon="@drawable/ic_find_treasure"
+        app:showAsAction="ifRoom" />
+</menu>
