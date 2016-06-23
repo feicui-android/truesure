@@ -46,6 +46,7 @@ import com.feicuiedu.treasure.components.TreasureView;
 import com.feicuiedu.treasure.treasure.Treasure;
 import com.feicuiedu.treasure.treasure.TreasureRepo;
 import com.feicuiedu.treasure.treasure.home.Area;
+import com.feicuiedu.treasure.treasure.home.hide.HideTreasureActivity;
 import com.hannesdorfmann.mosby.mvp.MvpFragment;
 
 import java.util.List;
@@ -81,6 +82,8 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
     private Marker selectedMarker; // 当前选择的Marker
 
     private GeoCoder geoCoder;// 地理编码API
+    private String address; // 位置描述
+    private double altitude;// 海拔
 
     private ActivityUtils activityUtils;
     private final BitmapDescriptor dot = BitmapDescriptorFactory.fromResource(R.drawable.treasure_dot);
@@ -174,6 +177,7 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
             // 当前位置的经纬度
             double lon = bdLocation.getLongitude();
             double lat = bdLocation.getLatitude();
+            altitude = bdLocation.getAltitude();
             myLocation = new LatLng(lat, lon);
             LogUtils.d(bdLocation.getAddrStr());
             //
@@ -262,7 +266,6 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
         // 反地理编码，经纬度 --> 位置描述
         @Override public void onGetReverseGeoCodeResult(ReverseGeoCodeResult reverseGeoCodeResult) {
             if (reverseGeoCodeResult == null) return;
-            String address = "";
             if (reverseGeoCodeResult.error == SearchResult.ERRORNO.NO_ERROR) {
                 address = "未知";
             }
@@ -318,7 +321,7 @@ public class MapFragment extends MvpFragment<MapMvpView, MapPresenter> implement
             activityUtils.showToast(R.string.please_input_title);
             return;
         }
-        activityUtils.showToast("埋藏宝藏处理...");
+        HideTreasureActivity.open(getContext(),title,address,baiduMap.getMapStatus().target,altitude);
     }
 
     @Override public void showMessage(String msg) {

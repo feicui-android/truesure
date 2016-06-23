@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.feicuiedu.treasure"
-    tools:ignore="GoogleAppIndexingWarning,AndroidLintAllowBackup">
+<manifest package="com.feicuiedu.treasure"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          tools:ignore="GoogleAppIndexingWarning,AndroidLintAllowBackup">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
 
     <application
         android:name=".TreasureApplication"
@@ -18,26 +18,29 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
 
-        <!--百度地图Key设置-->
+        <!-- 百度地图Key设置 -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="fMC1fwhqZ1LulL4rBz7lyrwNv6OwsdmX" />
+            android:value="fMC1fwhqZ1LulL4rBz7lyrwNv6OwsdmX"/>
 
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote"></service>
+            android:process=":remote"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".user.login.LoginActivity" />
-        <activity android:name=".user.register.RegisterActivity" />
-        <activity android:name=".treasure.home.HomeActivity" />
-        <activity android:name=".user.account.AccountActivity"></activity>
+        <activity android:name=".user.login.LoginActivity"/>
+        <activity android:name=".user.register.RegisterActivity"/>
+        <activity android:name=".treasure.home.HomeActivity"/>
+        <activity android:name=".user.account.AccountActivity"/>
+        <activity android:name=".treasure.home.hide.HideTreasureActivity">
+        </activity>
     </application>
 
 </manifest>
